@@ -2,7 +2,7 @@
 export const prerender = false;
 import Base from "../layouts/base.astro";
 
-import { supabase } from "../lib/supabase";
+import { supabase } from "../lib/supabase/client";
 
 const { cookies, redirect } = Astro;
 

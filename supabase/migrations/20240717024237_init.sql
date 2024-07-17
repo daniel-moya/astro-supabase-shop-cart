@@ -33,9 +33,9 @@ create table prices (
   product_id text references products(id), 
   active boolean,
   description text,
-  unit_amount bigint,  
+  unit_amount int,  
   currency text check (char_length(currency) = 3),
-  type pricing_type,
+  type pricing_type
 );
 alter table prices enable row level security;
 create policy "Allow public read-only access." on prices for select using (true);
@@ -89,8 +89,8 @@ create index idx_order_item_order_id on order_items (order_id);
 create function public.handle_new_user() 
 returns trigger as $$
 begin
-  insert into public.users (id, full_name, avatar_url)
-  values (new.id, new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'avatar_url');
+  insert into public.users (id, email) 
+  values (new.id, new.email);
   insert into public.carts (user_id)
   values (new.id);
   return new;
