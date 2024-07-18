@@ -1,6 +1,3 @@
-import Cart from '../components/cart.tsx';
-import Account from '../components/account.tsx';
-
 export default function Nav({ user }) {
 	return (
 		<nav style={{
