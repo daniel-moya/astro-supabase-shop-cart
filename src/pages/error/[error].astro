@@ -1,0 +1,13 @@
+---
+export const prerender = false;
+import Base from "../../layouts/base.astro";
+import { getErrorMessage } from "../../utils/error";
+
+const errorMessage = getErrorMessage(Astro.params.error);
+---
+
+<Base>
+	<h1>Oops, We're sorry</h1>
+	<!-- <p>{errorMessage}</p> -->
+	<a href="/">Go Gome</a>
+</Base>

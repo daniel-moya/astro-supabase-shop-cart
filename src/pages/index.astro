@@ -1,27 +1,48 @@
 ---
 export const prerender = false;
 import Base from "../layouts/base.astro";
+import AddToCartForm from "../components/AddToCartForm";
+import type { AstroCookies } from "astro";
+
 const price_ids = [
 	"fe0495d-3137-4b53-a539-c44c8b5e134a",
 	"13c505c2-6029-473a-9006-3939e440817c",
 	"07f3e060-1c95-42b1-9e8e-13ff6bce9d23",
 ];
+
+interface Locals {
+	email?: string;
+	userId?: string;
+}
+
+const { email }: Locals = Astro.locals;
 ---
 
 <Base>
-	<h1>Shop</h1>
-	{
-		price_ids.map((price_id, i) => (
-			<div class="product">
-				<h2>Product {i + 1}</h2>
-				<p>description</p>
-				<button>Add to cart</button>
-			</div>
-		))
-	}
+	<main>
+		{email ? <p>Welcome back {email}</p> : null}
+		<h1>Shop</h1>
+		{
+			price_ids.map((price_id, i) => (
+				<div class="product">
+					<h2>Product {i + 1}</h2>
+					<p>description</p>
+					<AddToCartForm>
+						<button type="submit">
+							Add to cart
+						</button>
+					</AddToCartForm>
+				</div>
+			))
+		}
+	</main>
 </Base>
 
 <style>
+	/* .container {
+		padding: 2vw 5vw;
+	}*/
+
 	.product {
 		margin: 1em 0;
 		border: 0.8px solid gray;

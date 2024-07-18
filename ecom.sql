@@ -1,44 +1,36 @@
 create table users (
-  id uuid references auth.users not null primary key,
+  id integer unique not null primary key autoincrement,
   full_name text,
   email text unique not null,
   avatar_url text,
-  billing_address jsonb,
-  payment_method jsonb,
-  created_at timestamp with time zone default current_timestamp
+  billing_address JSON,
+  payment_method JSON,
+  created_at datetime default current_timestamp
 );
-alter table users enable row level security;
 
 create table customers (
-  id uuid references auth.users not null primary key,
+  id integer unique not null primary key autoincrement,
   stripe_customer_id text
 );
-alter table customers enable row level security;
 
 create table products (
-  id text primary key,
+  id text unique primary key,
   active boolean,
   name text,
   description text,
   image text,
-  metadata jsonb
+  metadata JSON 
 );
-alter table products enable row level security;
-create policy "Allow public read-only access." on products for select using (true);
 
-create type pricing_type as enum ('one_time', 'recurring');
-create type pricing_plan_interval as enum ('day', 'week', 'month', 'year');
 create table prices (
-  id text primary key,
+  id text unique not null primary key,
   product_id text references products(id), 
   active boolean,
   description text,
   unit_amount int,  
   currency text check (char_length(currency) = 3),
-  type pricing_type
+  type ID 
 );
-alter table prices enable row level security;
-create policy "Allow public read-only access." on prices for select using (true);
 
 create table cart_items (
   id uuid not null default uuid_generate_v4() primary key,
@@ -77,17 +69,3 @@ create table order_items (
 alter table order_items enable row level security;
 create policy "Allow access to own order_items" on order_items for select using (auth.uid() = (select user_id from orders where orders.id = order_items.order_id));
 create index idx_order_item_order_id on order_items (order_id);
-
-create function public.handle_new_user() 
-returns trigger as $$
-begin
-  insert into public.users (id, email) 
-  values (new.id, new.email);
-  return new;
-end;
-$$ language plpgsql security definer;
-
-create trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute procedure public.handle_new_user();
-

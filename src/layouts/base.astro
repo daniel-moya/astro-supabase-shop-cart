@@ -1,33 +1,54 @@
 ---
-import Nav from "./nav.tsx";
+import NavBar from "../components/NavBar";
 
-const { email } = Astro.locals;
+interface Props {
+	title: string;
+}
+interface Locals {
+	email?: string;
+}
+
+const { email }: Locals = Astro.locals;
+
+const description = "Shop";
+const { title } = Astro.props;
+const ogImageURL = new URL("hero.png", Astro.site).href;
+const canonicalURL = new URL(Astro.url).href;
 ---
 
 <html lang="en">
 	<head>
+		<title>{title}</title>
 		<meta charset="utf-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1.0"
-		/>
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={description} />
+		<meta property="twitter:image" content={ogImageURL} />
+		<meta property="twitter:card" content="summary_large_image" />
+		<meta property="twitter:title" content={title} />
+		<meta property="twitter:description" content={description} />
+		<meta property="og:image" content={ogImageURL} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonicalURL} />
 	</head>
 	<body>
-		<Nav user={{ email }} />
-		<div class="container">
+		<NavBar user={{ email }} client:load />
+		<main>
 			<slot />
-		</div>
+		</main>
 	</body>
 </html>
 
 <style>
+	main {
+		padding: 2vw 5vw;
+	}
+
 	body {
 		width: 100%;
 		max-width: 100vw;
 		margin: 0;
-	}
-
-	.container {
-		padding: 2vw 5vw;
 	}
 </style>

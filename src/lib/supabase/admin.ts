@@ -8,8 +8,8 @@ type Price = Tables<'prices'>;
 // Note: supabaseAdmin uses the SERVICE_ROLE_KEY which you must only use in a secure server-side context
 // as it has admin privileges and overwrites RLS policies!
 const supabaseAdmin = createClient<Database>(
-	import.meta.env.SUPABASE_URL! || '',
-	import.meta.env.SUPABASE_ROLE_KEY! || ''
+	import.meta.env.SUPABASE_URL,
+	import.meta.env.SUPABASE_ROLE_KEY
 );
 
 interface IProduct {
@@ -113,11 +113,30 @@ const upsertCustomerToSupabase = async (uuid: string, customerId: string) => {
 		throw new Error(`Supabase customer record creation failed: ${upsertError.message}`);
 
 	return customerId;
+
 };
 
-//TODO: Insert cart_item
-//TODO: Delete cart_item
-//TODO: Upsert order
+async function addCartItem(price_id: string, quantity: number) {
+	const { data: { user } } = await supabaseAdmin.auth.getUser();
+	const { error: upsertError } = await supabaseAdmin
+		.from('cart_items')
+		.upsert([{ user_id: user.id, price_id, quantity }]);
+
+	if (upsertError)
+		throw new Error(`Supabase customer record creation failed: ${upsertError.message}`);
+
+	return price_id;
+}
+
+const deleteCartItemRecord = async (cart_item_id: string) => {
+	const { error: deletionError } = await supabaseAdmin
+		.from('cart_items')
+		.delete()
+		.eq('id', cart_item_id);
+	if (deletionError)
+		throw new Error(`Cart Item deletion failed: ${deletionError.message}`);
+	console.log(`Product deleted: ${cart_item_id}`);
+};
 
 // const createCustomerInStripe = async (uuid: string, email: string) => {
 // 	const customerData = { metadata: { supabaseUUID: uuid }, email: email };
@@ -230,5 +249,7 @@ export {
 	upsertPriceRecord,
 	deleteProductRecord,
 	deletePriceRecord,
+	addCartItem,
+	deleteCartItemRecord,
 	// createOrRetrieveCustomer,
 };

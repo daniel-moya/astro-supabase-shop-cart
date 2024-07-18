@@ -1,6 +1,25 @@
 ---
 export const prerender = false;
 import Base from "../layouts/base.astro";
+import { supabase } from "../lib/supabase/client";
+
+interface Locals {
+	email?: string;
+}
+
+const { email }: Locals = Astro.locals;
+
+try {
+	const res = await supabase.from("carts").select(
+		`
+		id, 
+		cart_items (price_id, quantity, created_at)
+	`,
+	);
+	console.log(res);
+} catch (e) {
+	console.log(e);
+}
 ---
 
 <Base>
