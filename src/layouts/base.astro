@@ -1,3 +1,9 @@
+---
+import Nav from "./nav.tsx";
+
+const { email } = Astro.locals;
+---
+
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
@@ -7,6 +13,21 @@
 		/>
 	</head>
 	<body>
-		<slot />
+		<Nav user={{ email }} />
+		<div class="container">
+			<slot />
+		</div>
 	</body>
 </html>
+
+<style>
+	body {
+		width: 100%;
+		max-width: 100vw;
+		margin: 0;
+	}
+
+	.container {
+		padding: 2vw 5vw;
+	}
+</style>

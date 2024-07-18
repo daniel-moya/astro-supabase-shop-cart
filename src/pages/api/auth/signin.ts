@@ -38,7 +38,8 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
 	});
 
 	if (error) {
-		return new Response(error.message, { status: 500 });
+		console.error(error);
+		return redirect("/");
 	}
 
 	const { access_token, refresh_token } = data.session;
@@ -48,5 +49,5 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
 	cookies.set("sb-refresh-token", refresh_token, {
 		path: "/",
 	});
-	return redirect("/dashboard");;
+	return redirect("/");;
 };
